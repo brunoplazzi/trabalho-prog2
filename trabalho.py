@@ -1,7 +1,7 @@
 import pickle
 import time
 
-#calcula nota final. retorna [nota] e [bonus]
+#retorna nota sem bonus e bonus
 def nota_final(notas, faltas):
 	
 	bonus = 0
@@ -16,7 +16,7 @@ def nota_final(notas, faltas):
 		
 	return nota, bonus
 
-#retorna True se s1 é mais recente que s2
+#retorna True, se s1 é mais recente que s2
 def semestreSort(s1, s2):
 	
 	ano1, periodo1 = s1
@@ -30,10 +30,12 @@ def semestreSort(s1, s2):
 		return True
 	if periodo1 < periodo2:
 		return False
-		
 
+#retorna True, se nome1 vem antes de nome2		
+def alfabetoSort(nome1, nome2):
+	
+	return nome1 < nome2
 
-# FUNCOES DE ORDENACAO
 
 #retorna True, se m1 vem antes de m2
 def antes(m1, m2, dic):
@@ -44,9 +46,9 @@ def antes(m1, m2, dic):
 	nota1, bonus1 = nota_final(notas1, faltas1)
 	nota2, bonus2 = nota_final(notas2, faltas2)
 	
-	#soma a nota e o bonus
 	nota_final1 = nota1 + bonus1
 	nota_final2 = nota2 + bonus2
+	
 	
 	#verificacoes
 	
@@ -63,27 +65,24 @@ def antes(m1, m2, dic):
 		return False
 	
 	#compara semestre letivo
-	
-	if semestreSort(semestre1, semestre2):
-		return True
-	if not semestreSort(semestre1, semestre2):
-		return False
+	if semestre1 != semestre2:
+		
+		return semestreSort(semestre1, semestre2)
 	
 	#ordem alfabética
-	
-	if nome1 < nome2:
-		return True
-	if nome1 > nome2:
-		return False
+	if nome1 != nome2:
+		if nome1 < nome2:
+			return True
+		if nome1 > nome2:
+			return False
 	
 	#ordem crescente de matricula
-	
 	if m1 < m2:
 		return True
 	if m1 > m2:
 		return False
 	
-
+#ordenacao com o mergeSort
 def merge(l, lEsq, lDir, dic):
 	i = 0
 	j = 0
@@ -117,10 +116,10 @@ def mergeSort(l, dic):
 		mergeSort(lDir, dic)
 		merge(l, lEsq, lDir, dic)
 		
-#funcao que escreve no arquivo a saida
+#funcao que cria o arquivo de saida
 def cria_arquivo(lista_matriculas, dic):
 	
-	with open("saida.txt", "w") as f:
+	with open("saida.txt", "w", encoding="UTF-8") as f:
 		
 		for mat in lista_matriculas:
 			
@@ -137,53 +136,65 @@ def cria_arquivo(lista_matriculas, dic):
 			f.write(linha)
 			f.write("\n")
 			
-	#PERGUNTA PRO HILARIO DO \n****************************************************
 
-def aprovados(lista_matriculas):
-	print("APROVADOS")
+#print no terminal a quantidade de alunos aprovados com busca binária
+def buscaBin(x, l):
+	inicio, fim = 0, len(l)-1
+	while inicio <= fim:
+		meio = (inicio + fim)//2
+		if x == l[meio]: return meio
+		if x < l[meio]: inicio = meio+1
+		if x > l[meio]: fim = meio-1
+	return -1
+
+def aprovados(lista_matriculas, dic):
 	
+	lista_notas = []
+	
+	for mat in lista_matriculas:
+		nota = dic[mat][2]
+		falta = dic[mat][3]
+		
+		lista_notas.append(sum(nota_final(nota, falta)))
+	
+	media = 60
+	pos_media = buscaBin(media, lista_notas)
+	
+	while pos_media == -1 and media < 100:
+		media +=1
+		pos_media = buscaBin(media, lista_notas)
+	
+	
+	if media == 100 and pos_media == -1:
+		print(0)
+	else:
+		
+		while lista_notas[pos_media + 1] == media:
+			pos_media +=1
+		
+		print(pos_media +1)
+
 
 def main():
-	startTime = time.time()
 	
 	#importar o dicionario do arquivo bin
-	arquivo = open("entrada100000.bin", "rb")
+	arquivo = open("entrada.bin", "rb")
 	
 	dic = pickle.load(arquivo)
 	
-	lista_matriculas = []
-
-
 	#criando a lista de matriculas não ordenada
+	lista_matriculas = []
 	for matricula in dic:
-		
 		lista_matriculas.append(matricula)
-		
 	
 	#ordenar a lista de uma vez
 	mergeSort(lista_matriculas, dic)
 	
-	
 	#cria um arquivo saida.txt
-	cria_arquivo(lista_matriculas, dic)
-		#PERGUNTA PRO HILARIO DO \n***************************************************************************
-				
+	cria_arquivo(lista_matriculas, dic)		
 
 	#print quantidade de alunos aprovados (busca binaria)
-	aprovados(lista_matriculas)
-	
-	
-	#tempo de execucao
-	print('Tempo de execução =', time.time() - startTime)
-	#LEMBRA DE TIRAR ******************************************************************************************
-	
-	
-	cont = 0
-	for i in lista_matriculas:
-		print(i, dic[i])
-		cont +=1
-		if cont == 100:
-			break #LIMPA ESSA MERDA ************************************************************************
+	aprovados(lista_matriculas, dic)
 	
 if __name__=="__main__":
 	main()
