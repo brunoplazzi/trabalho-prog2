@@ -1,4 +1,4 @@
-def compararArquivos(arquivo1, arquivo2):                           #$ OK / Funcao para testes
+'''def compararArquivos(arquivo1, arquivo2):                           #$ OK / Funcao para testes
     with open (arquivo1, 'r', encoding='utf-8') as ler:
         arq1 = ler.read()
     with open (arquivo2, 'r', encoding='utf-8') as ler:
@@ -12,3 +12,13 @@ def compararArquivos(arquivo1, arquivo2):                           #$ OK / Func
     print('\t' + '=' * len(stringSaida))
     print('\t' + stringSaida)
     print('\t' + '=' * len(stringSaida))
+
+'''
+
+
+
+
+n1 = "Madalena Braga"
+n2 = "Rodrigo Santos"
+
+print(n2 < n1)
