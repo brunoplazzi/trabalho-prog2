@@ -1,3 +1,11 @@
+#TRABALHO PROG2
+#INTEGANTES:
+#
+#Bruno Schneider Plazzi
+#Filipe Anunciação Batista de Moura
+
+
+
 import pickle
 import time
 
